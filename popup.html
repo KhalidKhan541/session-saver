@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Session Saver</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="header-left">
+        <img src="icons/icon48.png" alt="Session Saver" class="logo">
+        <h1>Session Saver</h1>
+      </div>
+      <div class="header-actions">
+        <button id="btn-export" class="icon-btn" title="Export sessions">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 12l-4-4h2.5V2h3v6H12L8 12zM2 14h12v-2H2v2z"/></svg>
+        </button>
+        <button id="btn-import" class="icon-btn" title="Import sessions">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 4l4 4H9.5v6h-3V8H4l4-4zM2 14h12v-2H2v2z"/></svg>
+        </button>
+        <button id="btn-settings" class="icon-btn" title="Settings">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 10a2 2 0 100-4 2 2 0 000 4zm0 1a3 3 0 110-6 3 3 0 010 6z"/><path d="M7.07.65a.85.85 0 01.86 0l4.2 2.42a.85.85 0 01.42.74v4.84a.85.85 0 01-.42.74L7.93 12.29a.85.85 0 01-.86 0L2.87 9.87a.85.85 0 01-.42-.74V4.29a.85.85 0 01.42-.74L7.07.65zM8 5.5L4.5 7.5v3L8 12.5l3.5-2v-3L8 5.5z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <nav class="tabs">
+      <button class="tab active" data-tab="current">Current Session</button>
+      <button class="tab" data-tab="saved">Saved Sessions</button>
+      <button class="tab" data-tab="stats">Statistics</button>
+    </nav>
+
+    <!-- Current Session Tab -->
+    <div class="tab-content active" id="tab-current">
+      <div class="current-session">
+        <div class="session-info-bar">
+          <span id="current-window-count">0 windows</span>
+          <span class="separator">·</span>
+          <span id="current-tab-count">0 tabs</span>
+        </div>
+        <div id="current-windows" class="windows-list"></div>
+        <div class="save-section">
+          <input type="text" id="session-name" placeholder="Session name (optional)" maxlength="100">
+          <div class="tag-input-row">
+            <input type="text" id="session-tags" placeholder="Tags (comma-separated)" maxlength="200">
+          </div>
+          <div class="suggestion-row" id="suggestion-row" style="display:none">
+            <span class="suggestion-label">Suggested:</span>
+            <div id="name-suggestions" class="suggestions"></div>
+          </div>
+          <button id="btn-save" class="btn-primary">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M13 1H3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V4l-2-3zm-1 11H4V2h7l2 2v8z"/><path d="M4 13V8h8v5H4zm4-6a2 2 0 100 4 2 2 0 000-4z"/></svg>
+            Save Current Session
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Saved Sessions Tab -->
+    <div class="tab-content" id="tab-saved">
+      <div class="saved-header">
+        <div class="search-bar">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M11.742 10.344a6.5 6.5 0 10-1.397 1.398h-.001l3.85 3.85a1 1 0 001.415-1.414l-3.85-3.85zm-5.242.156a5 5 0 110-10 5 5 0 010 10z"/></svg>
+          <input type="text" id="search-sessions" placeholder="Search sessions...">
+        </div>
+        <div class="filter-row">
+          <select id="sort-sessions">
+            <option value="date-desc">Newest first</option>
+            <option value="date-asc">Oldest first</option>
+            <option value="name-asc">Name A-Z</option>
+            <option value="name-desc">Name Z-A</option>
+            <option value="tabs-desc">Most tabs</option>
+            <option value="tabs-asc">Fewest tabs</option>
+          </select>
+          <div class="tag-filters" id="tag-filters"></div>
+        </div>
+      </div>
+      <div id="sessions-list" class="sessions-list">
+        <div class="empty-state" id="empty-state">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="8" y="6" width="32" height="36" rx="3"/><line x1="14" y1="14" x2="34" y2="14"/><line x1="14" y1="20" x2="34" y2="20"/><line x1="14" y1="26" x2="28" y2="26"/><circle cx="34" cy="34" r="10" fill="var(--bg-primary)" stroke="currentColor"/><line x1="34" y1="29" x2="34" y2="39"/><line x1="29" y1="34" x2="39" y2="34"/></svg>
+          <p>No saved sessions yet</p>
+          <span>Save your current session to get started</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistics Tab -->
+    <div class="tab-content" id="tab-stats">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value" id="stat-total-sessions">0</div>
+          <div class="stat-label">Total Sessions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-total-tabs">0</div>
+          <div class="stat-label">Tabs Archived</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-storage-used">0 KB</div>
+          <div class="stat-label">Storage Used</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-avg-tabs">0</div>
+          <div class="stat-label">Avg Tabs/Session</div>
+        </div>
+      </div>
+      <div class="stats-section">
+        <h3>Most Saved Sites</h3>
+        <div id="top-sites" class="top-sites"></div>
+      </div>
+      <div class="stats-section">
+        <h3>Session Activity</h3>
+        <div id="activity-chart" class="activity-chart"></div>
+      </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settings-modal" style="display:none">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>Settings</h2>
+          <button class="modal-close" id="btn-close-settings">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="setting-group">
+            <label class="toggle-label">
+              <span>Auto-save on browser close</span>
+              <input type="checkbox" id="setting-autosave" class="toggle">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-group">
+            <label class="toggle-label">
+              <span>Restore last session on startup</span>
+              <input type="checkbox" id="setting-autorestore" class="toggle">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-group">
+            <label class="toggle-label">
+              <span>Show badge with session count</span>
+              <input type="checkbox" id="setting-badge" class="toggle" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-group">
+            <label>Session retention</label>
+            <select id="setting-retention">
+              <option value="0">Keep forever</option>
+              <option value="7">7 days</option>
+              <option value="30" selected>30 days</option>
+              <option value="90">90 days</option>
+              <option value="180">180 days</option>
+              <option value="365">1 year</option>
+            </select>
+          </div>
+          <div class="setting-group">
+            <label>Max sessions to keep</label>
+            <input type="number" id="setting-max-sessions" value="100" min="10" max="1000">
+          </div>
+          <div class="setting-group">
+            <button id="btn-clear-all" class="btn-danger">Clear All Sessions</button>
+          </div>
+          <div class="setting-group">
+            <button id="btn-backup-bookmarks" class="btn-secondary">Backup to Bookmarks</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Compare Modal -->
+    <div class="modal-overlay" id="compare-modal" style="display:none">
+      <div class="modal modal-wide">
+        <div class="modal-header">
+          <h2>Compare Sessions</h2>
+          <button class="modal-close" id="btn-close-compare">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="compare-selectors">
+            <select id="compare-a"></select>
+            <span>vs</span>
+            <select id="compare-b"></select>
+            <button id="btn-do-compare" class="btn-secondary">Compare</button>
+          </div>
+          <div id="compare-results" class="compare-results"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Hidden file input for import -->
+    <input type="file" id="import-file" accept=".json" style="display:none">
+  </div>
+
+  <script src="storage.js"></script>
+  <script src="session-manager.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

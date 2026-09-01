@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head><title>Generate Icons</title></head>
+<body>
+<h1>Right-click each canvas and "Save image as" to icons/ folder</h1>
+<script>
+const sizes = [16, 32, 48, 128];
+sizes.forEach(size => {
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+
+  // Background circle
+  ctx.fillStyle = '#4f8cff';
+  ctx.beginPath();
+  ctx.arc(size/2, size/2, size/2, 0, Math.PI * 2);
+  ctx.fill();
+
+  // S icon
+  ctx.fillStyle = 'white';
+  ctx.font = `bold ${size * 0.55}px Arial`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('S', size/2, size/2);
+
+  const h = document.createElement('h3');
+  h.textContent = `icon${size}.png - Right click canvas below and save`;
+  document.body.appendChild(h);
+  document.body.appendChild(canvas);
+  document.body.appendChild(document.createElement('br'));
+});
+</script>
+</body>
+</html>
